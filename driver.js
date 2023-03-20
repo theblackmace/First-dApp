@@ -72,6 +72,7 @@ async function startApp() {
 		document.querySelector("#address-el").textContent = "Your Address: "+userAccount;
 		web3Instance = new web3js.eth.Contract(scABI, dappAddress);
 		console.log(web3Instance);
+		getString();
 
 	} catch (error) {
 		console.log('Please install MetaMask to use this dApp!');

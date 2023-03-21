@@ -4,6 +4,8 @@ const dappAddress = "0x8D3cfe243208DC6c5D97744a79D17f587084c491";
 var web3Instance;
 const inputEl = document.querySelector('input');
 var userAccount;
+const chainId = 5; // Goreli
+
 
 
 const scABI = [
@@ -58,14 +60,15 @@ window.addEventListener('load', function() {
     if (typeof web3 !== 'undefined') {
         web3js = new Web3(window.ethereum);
         startApp();
-      } else {
-        pEl.textContent = "Please install Metamask to access this dApp";
-        addEl.innerHTML = `Here's the <a href="https://metamask.io/" target="_blank">link</a> for the website`;
-      }
+    } else {
+		pEl.textContent = "Please install Metamask to access this dApp";
+		addEl.innerHTML = `Here's the <a href="https://metamask.io/" target="_blank">link</a> for the website`;
+	}
 })
 
 
 async function startApp() {
+	changeNetwork();
 	try {
 		var accounts = await ethereum.request({ method: 'eth_requestAccounts' });
 		userAccount = accounts[0];
@@ -94,7 +97,7 @@ document.querySelector("#getVar").addEventListener('click', function() {
 function setString(parameter) {
 	console.log("Sending txn...");
     return web3Instance.methods.setString(parameter)
-        .send({ from: userAccount })
+        .send({ from: userAccount})
         .on("receipt", function(receipt) {
             console.log("Txn Send successfully: " + receipt);
 			getString();
@@ -109,4 +112,17 @@ async function getString() {
 	.then(function(result) {
 		pEl.textContent = "State variable: "+result;
 	});
+}
+
+const changeNetwork = async () => {
+	if (window.ethereum) {
+		try {
+		await window.ethereum.request({
+		method: 'wallet_switchEthereumChain',
+			params: [{ chainId: Web3.utils.toHex(chainId) }],
+		});
+		} catch (error) {
+		console.error(error);
+		}
+	}
 }
